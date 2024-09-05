@@ -1,0 +1,148 @@
+# Linux overview and basic commands:
+# Introduction: https://www.digitalocean.com/community/tutorials/an-introduction-to-linux-basics
+# Basic Commands:
+# pwd,ls,cd,mkdir, rmdir,rm,cp, rsync,mv,locate,echo,cat, tail ,man, help
+# df, du, tar, zip, gzip, free
+# chmod, chown, sudo, su, 
+# hostname, ping, ifconfig, locate
+# pipe, grep and sort
+
+
+# Understanding environment variables in Linux
+# Linux Process Management: 
+# ps, kill, top,htop
+# Basic of Shell Scripting
+
+   
+# Instance creation and basic operations.
+# User creation(useradd).
+# Create a user with a specific home directory.
+# Create a user with a specific user id.
+# Create a user with a specific user group id.
+# Create a user with multiple groups.
+# Create a user with expiry
+
+# User Authentication:
+#       ssh key authentication.
+#       Password Authentication.
+# User deletion.
+# User groups creation, deletion and common operations.
+# Permissions:
+#       Understanding permissions.
+#       Understanding of ownership.
+#       Assign file and directory permissions to a particular user.
+#       Revoke permissions.
+
+# Crontab 
+#       Scheduling process
+#       User level cron job scheduling
+#       Cron logs debugging and overview
+
+# Firewall/Selinux
+#               i.        Allow/block the ports on server
+#               ii.       List the used ports on the servers
+#               iii.      Firewall rules overview    
+   
+                  
+
+
+
+# Bastion Access and Installation
+# SSH Installation and configuration.
+# Google authenticator installation.
+
+
+# Web Servers:
+#             Apache:
+#                   Basic installation & configuration.
+#                   Virtual hosting.
+#                   Basic security.
+#                   SSL installation & configuration.
+#                   Integration with PHP.  
+#             Nginx:
+#                   Basic installation & configuration.
+#                   Virtual hosting.
+#                   Basic security.
+#                   SSL installation & configuration.
+#                   Integration with PHP.
+#                   PHP-FPM installation and configuration.  
+#             Tomcat:
+#                   Basic installation & configuration.
+#                   Virtual hosting.
+#                   Basic security.
+#                   SSL installation & configuration.
+
+# Databases:
+#             MySQL Database:
+#                   Overview.
+#                   Installation Configuration
+#                   Database and tables creation.
+#                   User creation and permissions.
+#                   Security related to MySQL DB.
+#                   Basic queries.
+#                   Monitoring.
+#                   Backup and Restore.
+            
+#             Mongo Database:
+#                   Overview.
+#                   Installation and configuration.
+#                   Database and collection creation.
+#                   User creation and permissions.
+#                   Security configuration.
+#                   Basic Queries.
+#                   Monitoring.
+#                   Overview of Replica set.
+#                   Basic implementation of Replica set.
+            
+#             Redis: 
+#                   Overview 
+#                   Installation and configuration.
+#                   Security configuration.
+#                   Basic operation.
+#                   Monitoring commands.
+#                   Backup and Restore.
+            
+#             ARDB:
+#                   Overview 
+#                   Installation and configuration.
+#                   Security configuration.
+#                   Basic operation.
+#                   Monitoring commands.
+#                   Backup and Restore.
+            
+#             Kafka:
+#                   Kafka & zookeeper architecture overview
+#                   Installation & configuration.
+#                   Kafka producer functions overview
+#                   Kafka consumer functions overview
+#                   Kafka broker overview
+#                   Kafka topic overview
+#                   Produce message in topic
+#                   Consume message from topic
+#                   Create and delete topic
+#                   Set custom topic retention period for storing data
+#                   Zookeeper functions and uses
+
+# Networking
+       
+# Security:
+#       a. Basic server level hardening
+#       b. Basic apache/nginx hardening
+#       c. Basic mysql,redis,mongodb hardening 
+#       d. Fail2ban overview and setup on server
+
+# Ansible Overview and Playbooks.
+
+# GitLab or Bitbucket or any SCM(Source Code Management):
+#           Overview of GIT.
+#           Basic GIT commands and usage.
+#           Account setup and integration.
+# Pipelines overview.
+# Integration with Azure Cloud.
+# Azure Cloud:
+#       Overview & core concepts.
+#       Core azure services overview.
+#       Core solutions and management tools.
+#       General and network security features.
+#       Azure network and peering
+        # Cost management.
