@@ -1,0 +1,141 @@
+Jenkins Pipeline Assignment Documentation
+
+Objective
+
+Set up a Jenkins pipeline that automatically triggers on GitHub pushes to the develop branch and pulls Git content to a specific folder on the Jenkins server.
+
+Prerequisites
+
+Ubuntu-based Linux Instance with Jenkins installed.
+
+GitHub Repository with the develop branch.
+
+Jenkins Plugins Required:
+
+Git Plugin
+
+GitHub Integration Plugin
+
+Git Installed on Linux Server:
+
+sudo apt update
+sudo apt install git -y
+
+Step 1: Set up SSH Access for GitHub
+
+Generate SSH Key:
+
+ssh-keygen -t rsa -b 4096 -C "your-email@example.com"
+
+Press Enter to accept the default path.
+
+View the Public Key:
+
+cat ~/.ssh/id_rsa.pub
+
+Add the SSH Key to GitHub:
+
+Go to GitHub SSH Keys Settings.
+
+Click New SSH Key.
+
+Paste the contents of id_rsa.pub and give it a title.
+
+Click Add SSH Key.
+
+Test the Connection:
+
+ssh -T git@github.com
+
+Step 2: Configure Jenkins Git Credentials
+
+Go to Jenkins Dashboard > Manage Jenkins > Credentials > System > Global credentials (unrestricted) > Add Credentials.
+
+Select SSH Username with private key:
+
+Username: git
+
+Private Key: Select Enter directly and paste the contents of ~/.ssh/id_rsa.
+
+Click OK to save.
+
+Step 3: Create the Jenkins Pipeline
+
+Create a New Pipeline:
+
+Navigate to the Jenkins Dashboard.
+
+Click New Item, enter a project name, and select Pipeline.
+
+Click OK.
+
+General Configuration:
+
+Enable GitHub Project and enter the project URL.
+
+Triggers:
+
+Select GitHub hook trigger for GITScm polling.
+
+Pipeline Configuration:
+
+Select Pipeline Script and paste the following code:
+
+pipeline {
+    agent any
+    triggers {
+        githubPush() // GitHub webhook trigger
+    }
+    environment {
+        GIT_REPO = 'git@github.com:your-username/your-repo.git'
+        GIT_BRANCH = 'develop'
+        WORK_DIR = '/var/lib/jenkins/workspace/git_content'
+    }
+    stages {
+        stage('Clone Git Repository') {
+            steps {
+                script {
+                    // Ensure the target directory exists
+                    sh "mkdir -p ${WORK_DIR}"
+                    // Clone the develop branch of the GitHub repository
+                    dir(WORK_DIR) {
+                        git branch: GIT_BRANCH, credentialsId: 'your-ssh-credential-id', url: GIT_REPO
+                    }
+                    echo "Git repository pulled successfully into ${WORK_DIR}"
+                }
+            }
+        }
+    }
+}
+
+Note: Replace your-username, your-repo, and your-ssh-credential-id with your actual GitHub details.
+
+Step 4: Set up GitHub Webhook
+
+Go to your GitHub repository.
+
+Navigate to Settings > Webhooks > Add Webhook.
+
+Configure the webhook:
+
+Payload URL: http://<Your_Server_IP>:8080/github-webhook/
+
+Content type: application/json
+
+Trigger: Select Just the push event.
+
+Click Add Webhook.
+
+Step 5: Test the Setup
+
+Push a commit to the develop branch of your GitHub repo:
+
+git add .
+git commit -m "Initial commit for Jenkins pipeline setup"
+git push origin develop
+
+Verify that Jenkins automatically triggers the pipeline build and pulls the Git content to the specified directory.
+
+Conclusion
+
+Following these steps, you have successfully set up a Jenkins pipeline that triggers on GitHub pushes and pulls the repository content to a designated folder on your Jenkins server.
