@@ -1,0 +1,169 @@
+# 🚀 DevOps Hands-On Project
+
+This project automates the creation of EC2 infrastructure, Ansible-based configuration management, and Jenkins CI pipeline setup on AWS using Terraform, Ansible, and Jenkins.
+
+---
+
+## ✅ PART 1: Manual Setup & Terraform Installation
+
+### Step 1: Launch a Free Tier EC2 Instance Manually (Ubuntu 22.04)
+
+- **Name**: Terraform-Setup-Instance  
+- **AMI**: Ubuntu 22.04  
+- **Instance type**: t2.micro (Free Tier)  
+- **Key Pair**: Create or use existing  
+- **Network**: Default VPC & Subnet  
+- **Storage**: 8GB (default)  
+
+Launch the instance via AWS Console.
+
+### Step 2: SSH into the EC2 Instance
+
+```bash
+ssh -i your-key.pem ubuntu@<EC2-Public-IP>
+### Step 3: Install Terraform
+https://developer.hashicorp.com/terraform/tutorials/aws-get-started/install-cli
+
+---
+
+## ✅ PART 2: Use Terraform to Create 3 EC2 Instances
+### step 4: Write Terraform Script
+Create a directory and files:
+mkdir terraform-prt && cd terraform-prt
+touch main.tf variables.tf outputs.tf
+
+main.tf 
+provider "aws" {
+  region = "us-west-2"
+}
+
+resource "aws_instance" "prt_instances" {
+  count         = 3
+  ami           = "ami-075686beab831bb7f" # Ubuntu 24.04
+  instance_type = "t2.micro"
+  key_name      = "prt"
+  user_data     = file("install.sh")
+  tags = {
+    Name = "PRT-Instance-${count.index + 1}"
+  }
+}
+outputs.tf
+output "instance_ips" {
+  value = aws_instance.prt_instances[*].public_ip
+}
+
+### Step 5: Create install.sh script (used in user_data)
+vim install.sh
+#!/bin/bash
+sudo apt-get update -y
+sudo apt-get install -y software-properties-common
+if hostname | grep -q "1"; then
+  # Install Ansible only in one instance (Master)
+  sudo apt-add-repository --yes --update ppa:ansible/ansible
+  sudo apt-get install -y ansible
+fi
+chmod +x install.sh
+
+### Step 6: Initialize & Apply Terraform
+terraform init
+terraform plan
+terraform apply -auto-approve
+
+Note:- add iam role to the instance that include Ec2fullaccess
+
+---
+
+## ✅ PART 3: Ansible Master-Slave Setup
+### Step 7: SSH into the Ansible Master (based on IP/hostname)
+ssh -i your-key.pem ubuntu@<Ansible-Master-IP>
+
+### Step 8: Set up passwordless SSH to slaves
+ssh-keygen -t rsa
+ssh-copy-id -i ~/.ssh/id_rsa.pub ubuntu@<slave1-ip>
+ssh-copy-id -i ~/.ssh/id_rsa.pub ubuntu@<slave2-ip>
+(Do the above to steps manually, copy id_rsa.pub and paste in .ssh/authorized_keys in both the slaves )
+
+### Step 9: Update Ansible Inventory in master node
+sudo nano /etc/ansible/hosts
+[slave1]
+<Slave1-IP>
+
+[slave2]
+<Slave2-IP>
+ansible all -m ping  #for testing connection
+
+---
+
+## ✅ PART 4: Ansible Playbook to Install Java and Jenkins
+Step 10: Create Ansible Playbook in master node
+vim install_java_jenkins.yml
+- hosts: slave1
+  become: yes
+  tasks:
+    - name: Install Java 17
+      apt:
+        name: openjdk-17-jdk
+        state: present
+        update_cache: yes
+
+    - name: Install required packages
+      apt:
+        name:
+          - gnupg
+          - curl
+        state: present
+        update_cache: yes
+
+    - name: Download and add Jenkins key in dearmored form
+      shell: |
+        curl -fsSL https://pkg.jenkins.io/debian/jenkins.io-2023.key | gpg --dearmor -o /usr/share/keyrings/jenkins-keyring.gpg
+      args:
+        executable: /bin/bash
+
+    - name: Add Jenkins repository
+      apt_repository:
+        repo: "deb [signed-by=/usr/share/keyrings/jenkins-keyring.gpg] https://pkg.jenkins.io/debian binary/"
+        filename: jenkins
+        state: present
+
+    - name: Install dependencies
+      apt:
+        name: [gnupg, curl]
+        state: present
+        update_cache: yes
+
+    - name: Update apt cache
+      apt:
+        update_cache: yes
+
+    - name: Install Jenkins
+      apt:
+        name: jenkins
+        state: present
+
+  handlers:
+    - name: Start Jenkins
+      service:
+        name: jenkins
+        state: started
+        enabled: yes
+
+- name: Install Java 17 only on slave2
+  hosts: slave2
+  become: yes
+  tasks:
+    - name: Update apt cache
+      apt:
+        update_cache: yes
+
+    - name: Install OpenJDK 17
+      apt:
+        name: openjdk-17-jdk
+        state: present
+
+### Step 11: Run the Playbook
+ansible-playbook install_java_jenkins.yml
+
+---
+
+ 
