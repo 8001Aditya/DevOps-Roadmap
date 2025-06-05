@@ -165,5 +165,18 @@ vim install_java_jenkins.yml
 ansible-playbook install_java_jenkins.yml
 
 ---
+sudo su - jenkins
+jenkins@ip-172-31-42-81:~$ ssh ubuntu@172.31.35.39
+
+pipeline {
+    agent any
+    stages {
+        stage('Clone Repo') {
+            steps {
+                git branch: 'main', url: 'https://github.com/Sameer-8080/Website-PRT-ORG'
+            }
+        }
+    }
+}
 
  
